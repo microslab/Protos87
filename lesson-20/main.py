@@ -76,20 +76,24 @@ async def Ppogoda22(message: Message, state: FSMContext):
     else:
         pogodas(message.text)
         data_pogoda = pogodas(message.text)
-        await message.answer(f'''В городе {data_pogoda["city_name"]} сейчас {data_pogoda["description"]}
+        if data_pogoda == "No city":
+            await message.answer(f'Вы ввели не корректный город')
+            await start_questions(message)
+        else:
+            await message.answer(f'''В городе {data_pogoda["city_name"]} сейчас {data_pogoda["description"]}
 Температура: {data_pogoda["temp"]} ℃\nСкорость ветра: {data_pogoda["wind"]} м/c
 Рассвет: {data_pogoda["sunrise"]}\nЗакат: {data_pogoda["sunset"]}''', reply_markup=generate_language())
-        chat_id = message.chat.id
-        database = sqlite3.connect('bot.db')
-        cursor = database.cursor()
-        cursor.execute('''
-        INSERT INTO history(telegram_id, city_name, description, temp, wind, sunrise, sunset)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (chat_id, data_pogoda["city_name"], data_pogoda["description"], data_pogoda["temp"], data_pogoda["wind"], data_pogoda["sunrise"], data_pogoda["sunset"]))
-        database.commit()
-        database.close()
-        await state.finish()
-        await start_questions(message)
+            chat_id = message.chat.id
+            database = sqlite3.connect('bot.db')
+            cursor = database.cursor()
+            cursor.execute('''
+            INSERT INTO history(telegram_id, city_name, description, temp, wind, sunrise, sunset)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (chat_id, data_pogoda["city_name"], data_pogoda["description"], data_pogoda["temp"], data_pogoda["wind"], data_pogoda["sunrise"], data_pogoda["sunset"]))
+            database.commit()
+            database.close()
+            await state.finish()
+            await start_questions(message)
 
 
 if __name__ == '__main__':

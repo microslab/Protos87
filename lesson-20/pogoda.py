@@ -26,4 +26,4 @@ def pogodas(city):
         }
         return data_pogoda
     except KeyError:
-        return "Вы ввели не корректный город"
+        return "No city"
