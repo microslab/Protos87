@@ -36,10 +36,10 @@ async def get_image_by_category(message: Message):
         random_image_link = image_links[random_index][0]
         resolution = re.search( '[0-9]+x[0-9]+', random_image_link)[0]
         image_id = get_image_id(random_image_link)
-        resize_linkmobi = random_image_link.replace(resolution, '1080x1920')
+        resize_linkmobi = random_image_link.replace(resolution, '540x960')
         try:
-            await get_files_img(random_image_link, resolution, resize_linkmobi)
-            time.sleep(3)
+            get_files_img(random_image_link, resolution, resize_linkmobi)
+            time.sleep(2)
             photo = InputFile('temp/templasemokapall.jpg')
             await message.answer_photo(photo=photo,
                                        caption=f'Разрешение {resolution}',
@@ -49,8 +49,8 @@ async def get_image_by_category(message: Message):
             # print(e.__class__)
             # print(e.__class__.__name__)
             resize_link = random_image_link.replace(resolution, '1920x1080')
-            await get_files_img(resize_link, resolution, resize_linkmobi)
-            time.sleep(3)
+            get_files_img(resize_link, resolution, resize_linkmobi)
+            time.sleep(2)
             photo = InputFile('temp/templasemokapall.jpg')
             await message.answer_photo(photo=photo,
                                        caption=f'Разрешение {resolution}',

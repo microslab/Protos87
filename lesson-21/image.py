@@ -22,7 +22,7 @@ def get_files_img(link, rest, link2):
         print("Unable to open image")
         # sys.exit(1)
     img.save('temp/templase.jpg', 'jpeg')
-    # img.close()
+    img.close()
 
 
     try:
@@ -37,8 +37,8 @@ def get_files_img(link, rest, link2):
     idraw.text((30, 30), text, font=font, stroke_width=1, stroke_fill='black')
 
     watermark.save('temp/templase.jpg')
-    img.close()
-    # watermark.close()
+    # img.close()
+    watermark.close()
     get_files_imgmobi(link2)
     mokap_img()
     return 'good'
@@ -52,12 +52,13 @@ def get_files_imgmobi(link):
         resp = requests.get(url, stream=True).raw
     except requests.exceptions.RequestException as e:
         # sys.exit(1)
-        pass
+        return 'bad'
     try:
         img = Image.open(resp)
     except IOError:
         print("Unable to open image")
         # sys.exit(1)
+        return 'bad'
     img.save('temp/templasemobi.jpg', 'jpeg')
     img.close()
 
@@ -101,6 +102,7 @@ def mokap_img():
     except:
         print("Unable to load image")
         # sys.exit(1)
+        return 'bad'
     h1 = 1920
     size = int((h1 / 1280) * 20)
     idraw = ImageDraw.Draw(watermark)
