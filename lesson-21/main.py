@@ -1,11 +1,13 @@
+import time
 from os import getenv
 from database import select_categories, check_category_name, get_image_links, get_image_id, get_image
 from keyboards import generate_categories, generate_download_button
 from random import randint
+from image import get_files_img
 import re
 
 from aiogram import executor, Bot, Dispatcher
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputFile, MediaGroup
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,16 +36,27 @@ async def get_image_by_category(message: Message):
         random_image_link = image_links[random_index][0]
         resolution = re.search( '[0-9]+x[0-9]+', random_image_link)[0]
         image_id = get_image_id(random_image_link)
+        resize_linkmobi = random_image_link.replace(resolution, '1080x1920')
+        type1 = [random_image_link]
         try:
-            await message.answer_photo(photo=random_image_link,
+            type1.append('one')
+            get_files_img(random_image_link, resolution, type1, resize_linkmobi)
+            time.sleep(2)
+            photo = InputFile('temp/templase.jpg')
+            await message.answer_photo(photo=photo,
                                        caption=f'Разрешение {resolution}',
                                        reply_markup=generate_download_button(image_id))
+
         except Exception as e:
-            print(e.__class__)
-            print(e.__class__.__name__)
+            # print(e.__class__)
+            # print(e.__class__.__name__)
+            type1.append('two')
             resize_link = random_image_link.replace(resolution, '1920x1080')
-            await message.answer_photo(photo=resize_link,
-                                       caption=f'Разрешение {resolution} try',
+            get_files_img(resize_link, resolution, type1, resize_linkmobi)
+            time.sleep(2)
+            photo = InputFile('temp/templase.jpg')
+            await message.answer_photo(photo=photo,
+                                       caption=f'Разрешение {resolution}',
                                        reply_markup=generate_download_button(image_id))
 
     else:
@@ -57,9 +70,14 @@ async def download_finction(call: CallbackQuery):
     _, image_id = call.data.split('_')
     image_link = get_image(image_id)
     try:
-        await bot.send_document(chat_id, image_link)
+        # await bot.send_message(chat_id, f'PC версия картинки')
+        await bot.send_document(chat_id, image_link, caption='PC версия картинки')
+        # await bot.send_message(chat_id, f'Мобильная версия')
+        await bot.send_document(chat_id, open('temp/templasemobi.jpg', 'rb'), caption='Мобильная версия')
     except:
-        await bot.send_message(chat_id, f'Скачай сам {image_link}')
+        await bot.send_message(chat_id, f'PC версия картинки\nСкачай сам {image_link}')
+        await bot.send_message(chat_id, f'Мобильная версия')
+        await bot.send_document(chat_id, open('temp/templasemobi.jpg', 'rb'))
 
 
 
