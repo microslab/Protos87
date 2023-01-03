@@ -37,12 +37,10 @@ async def get_image_by_category(message: Message):
         resolution = re.search( '[0-9]+x[0-9]+', random_image_link)[0]
         image_id = get_image_id(random_image_link)
         resize_linkmobi = random_image_link.replace(resolution, '1080x1920')
-        type1 = [random_image_link]
         try:
-            type1.append('one')
-            get_files_img(random_image_link, resolution, type1, resize_linkmobi)
-            time.sleep(2)
-            photo = InputFile('temp/templase.jpg')
+            await get_files_img(random_image_link, resolution, resize_linkmobi)
+            time.sleep(3)
+            photo = InputFile('temp/templasemokapall.jpg')
             await message.answer_photo(photo=photo,
                                        caption=f'Разрешение {resolution}',
                                        reply_markup=generate_download_button(image_id))
@@ -50,11 +48,10 @@ async def get_image_by_category(message: Message):
         except Exception as e:
             # print(e.__class__)
             # print(e.__class__.__name__)
-            type1.append('two')
             resize_link = random_image_link.replace(resolution, '1920x1080')
-            get_files_img(resize_link, resolution, type1, resize_linkmobi)
-            time.sleep(2)
-            photo = InputFile('temp/templase.jpg')
+            await get_files_img(resize_link, resolution, resize_linkmobi)
+            time.sleep(3)
+            photo = InputFile('temp/templasemokapall.jpg')
             await message.answer_photo(photo=photo,
                                        caption=f'Разрешение {resolution}',
                                        reply_markup=generate_download_button(image_id))
@@ -70,14 +67,13 @@ async def download_finction(call: CallbackQuery):
     _, image_id = call.data.split('_')
     image_link = get_image(image_id)
     try:
-        # await bot.send_message(chat_id, f'PC версия картинки')
         await bot.send_document(chat_id, image_link, caption='PC версия картинки')
-        # await bot.send_message(chat_id, f'Мобильная версия')
         await bot.send_document(chat_id, open('temp/templasemobi.jpg', 'rb'), caption='Мобильная версия')
+        open('temp/templasemobi.jpg', 'rb').close()
     except:
         await bot.send_message(chat_id, f'PC версия картинки\nСкачай сам {image_link}')
-        await bot.send_message(chat_id, f'Мобильная версия')
         await bot.send_document(chat_id, open('temp/templasemobi.jpg', 'rb'))
+        open('temp/templasemobi.jpg', 'rb').close()
 
 
 
